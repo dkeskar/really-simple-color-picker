@@ -7,13 +7,18 @@
  */
 
 (function($){
-  $.fn.colorPicker = function(){    
+  $.fn.colorPicker = function(options){
     if(this.length > 0) buildSelector();
+    if (options && options.onSelect) {
+      var myid = $(this).attr('id');
+      onSelectCallback[myid] = options.onSelect;
+    }
     return this.each(function(i) { buildPicker(this)}); 
   };
   
   var selectorOwner;
   var selectorShowing = false;
+  var onSelectCallback = {};
   
   buildPicker = function(element){
     //build color picker
@@ -54,7 +59,7 @@
      hex_field = $("<label for='color_value'>Hex</label><input type='text' size='8' id='color_value'/>");
      hex_field.bind("keydown", function(event){
       if(event.keyCode == 13) {changeColor($(this).val());}
-      if(event.keyCode == 27) {toggleSelector()}
+      if(event.keyCode == 27) {toggleSelector()}      
      });
      
      $("<div id='color_custom'></div>").append(hex_field).appendTo(selector);
@@ -111,6 +116,8 @@
     
       //close the selector
       hideSelector();    
+      var myid = $(selectorOwner).prev("input").attr('id');
+      if (onSelectCallback[myid]) onSelectCallback[myid](selectedValue);
     }
   };
   
@@ -150,7 +157,7 @@
   };
   
   $.fn.colorPicker.defaultColors = 
-	[ '000000', '993300','333300', '000080', '333399', '333333', '800000', 'FF6600', '808000', '008000', '008080', '0000FF', '666699', '808080', 'FF0000', 'FF9900', '99CC00', '339966', '33CCCC', '3366FF', '800080', '999999', 'FF00FF', 'FFCC00', 'FFFF00', '00FF00', '00FFFF', '00CCFF', '993366', 'C0C0C0', 'FF99CC', 'FFCC99', 'FFFF99' , 'CCFFFF', '99CCFF', 'FFFFFF'];
+[ '000000', '993300','333300', '000080', '333399', '333333', '800000', 'FF6600', '808000', '008000', '008080', '0000FF', '666699', '808080', 'FF0000', 'FF9900', '99CC00', '339966', '33CCCC', '3366FF', '800080', '999999', 'FF00FF', 'FFCC00', 'FFFF00', '00FF00', '00FFFF', '00CCFF', '993366', 'C0C0C0', 'FF99CC', 'FFCC99', 'FFFF99' , 'CCFFFF', '99CCFF', 'FFFFFF'];
   
 })(jQuery);
 
